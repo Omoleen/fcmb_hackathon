@@ -71,13 +71,13 @@ class BeneficiariesView(generics.GenericAPIView):
     def get_queryset(self):
         return self.request.user.beneficiaries.all()
 
-    def get(self, request):
+    def get(self, request, **kwargs):
         return Response({
             'data': self.serializer_class(self.get_queryset(), many=True).data
         }, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
+        serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response({
@@ -93,11 +93,12 @@ class BeneficiariesView(generics.GenericAPIView):
 class BeneficiariesDetail(generics.GenericAPIView):
     serializer_class = BeneficiaryContactSerializer
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field = 'id'
 
     def get_queryset(self):
         return self.request.user.beneficiaries.all()
 
-    def get(self, request):
+    def get(self, request, **kwargs):
         return Response({
             'data': self.serializer_class(self.get_object()).data
         }, status=status.HTTP_200_OK)
@@ -113,7 +114,7 @@ class TransactionHistoryView(generics.GenericAPIView):
     def get_queryset(self):
         return self.request.user.transaction_histories.all()
 
-    def get(self, request):
+    def get(self, request, **kwargs):
         return Response({
             'data': self.serializer_class(self.get_queryset(), many=True).data
         }, status=status.HTTP_200_OK)
@@ -125,7 +126,7 @@ class TransactionHistoryDetail(generics.GenericAPIView):
     def get_queryset(self):
         return self.request.user.transaction_histories.all()
 
-    def get(self, request):
+    def get(self, request, **kwargs):
         return Response({
             'data': self.serializer_class(self.get_object()).data
         }, status=status.HTTP_200_OK)

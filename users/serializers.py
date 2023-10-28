@@ -14,7 +14,7 @@ class TokenSerializer(serializers.Serializer):
 class BeneficiaryContactSerializer(serializers.ModelSerializer):
     class Meta:
         model = BeneficiaryContact
-        exclude = []
+        exclude = ['user']
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
