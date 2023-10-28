@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 
 @receiver(post_save, sender=Loan)
-def send_otp_on_create(sender, instance: Loan, created, **kwargs):
+def create_loan_repayment_plans(sender, instance: Loan, created, **kwargs):
     if created:
         repayment_plans = []
         for i in range(instance.advertised_loan.times_to_pay):

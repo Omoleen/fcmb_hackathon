@@ -86,7 +86,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # required fields
     date_joined = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now=True)
 
     is_admin = models.BooleanField(default=False)
     is_agent = models.BooleanField(default=False)
@@ -117,8 +116,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         }
 
 
-class BenificiaryContact(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='beneficiary')
+class BeneficiaryContact(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='beneficiaries')
     first_name = models.CharField(max_length=512, null=True, blank=True)
     last_name = models.CharField(max_length=512, null=True, blank=True)
     bvn = models.CharField(max_length=512, null=True, blank=True)
@@ -127,7 +126,7 @@ class BenificiaryContact(models.Model):
 
 
 class AdvertisedLoan(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='advertised_loan', null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='advertised_loans', null=True)
     initial_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True)
     total_amount_remaining = models.DecimalField(max_digits=20, decimal_places=2, null=True)
     interest = models.DecimalField(max_digits=20, decimal_places=2, null=True)
@@ -138,14 +137,14 @@ class AdvertisedLoan(models.Model):
 
 
 class Loan(models.Model):
-    advertised_loan = models.ForeignKey(AdvertisedLoan, on_delete=models.SET_NULL, related_name='loan', null=True)
+    advertised_loan = models.ForeignKey(AdvertisedLoan, on_delete=models.SET_NULL, related_name='loans', null=True)
     receiving_user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='loan', null=True)
     amount = models.DecimalField(max_digits=20, decimal_places=2, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
 class LoanRepayment(models.Model):
-    loan = models.ForeignKey(Loan, on_delete=models.CASCADE, related_name='repayment')
+    loan = models.ForeignKey(Loan, on_delete=models.CASCADE, related_name='repayments')
     amount = models.DecimalField(max_digits=20, decimal_places=2, null=True)
     date = models.DateTimeField(auto_now=True)
     is_paid = models.BooleanField(default=False)
@@ -160,8 +159,8 @@ class TransactionHistoryChoices(models.TextChoices):
 
 
 class TransactionHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='transaction_history', null=True)
-    agent = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='agent_transaction_history', null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='transaction_histories', null=True)
+    agent = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='agent_transaction_histories', null=True)
     title = models.CharField(max_length=512, null=True, blank=True, choices=TransactionHistoryChoices.choices)
     remaining_balance = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
