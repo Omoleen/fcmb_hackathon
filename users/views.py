@@ -12,6 +12,7 @@ class UserRegister(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            serializer.save()
             return Response({
                 'message': 'User registered',
                 'data': serializer.data
@@ -35,6 +36,7 @@ class Profile(generics.GenericAPIView):
     def patch(self, request):
         serializer = self.serializer_class(request.user, data=request.data)
         if serializer.is_valid():
+            serializer.save()
             return Response({
                 'message': 'User registered',
                 'data': serializer.data
@@ -51,11 +53,13 @@ class UserLogin(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            serializer.save()
             return Response({
                 'message': 'User logged in',
                 'data': serializer.data
             }, status=status.HTTP_200_OK)
         else:
+            print(serializer.errors)
             return Response({
                 'message': f'{list(serializer.errors.keys())[0]} - {list(serializer.errors.values())[0][0]}'
             }, status=status.HTTP_400_BAD_REQUEST)
@@ -75,6 +79,7 @@ class BeneficiariesView(generics.GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
+            serializer.save()
             return Response({
                 'message': 'beneficiary registered',
                 'data': serializer.data

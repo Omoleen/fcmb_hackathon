@@ -29,6 +29,7 @@ class CustomUserManager(BaseUserManager):
             first_name=first_name,
             last_name=last_name,
             # role=role,
+            is_active=True,
             phone_number=phone_number,
             **kwargs
         )
@@ -68,9 +69,9 @@ class VerifyIDChoices(models.TextChoices):
 
 class User(AbstractBaseUser, PermissionsMixin):
 
-    first_name = models.CharField(max_length=50, blank=True, null=True)
-    last_name = models.CharField(max_length=50, blank=True, null=True)
-    email = models.EmailField(_('email address'), unique=True, null=True)
+    first_name = models.CharField(max_length=50,)
+    last_name = models.CharField(max_length=50,)
+    email = models.EmailField(_('email address'), unique=True,)
     phone_number = PhoneNumberField(unique=True)
     wallet = models.DecimalField(max_digits=20, decimal_places=2, default=0.00, null=True)
     otp = models.CharField(default='0000', max_length=4)
