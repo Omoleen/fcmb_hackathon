@@ -69,9 +69,9 @@ class VerifyIDChoices(models.TextChoices):
 
 class User(AbstractBaseUser, PermissionsMixin):
 
-    first_name = models.CharField(max_length=50,)
-    last_name = models.CharField(max_length=50,)
-    email = models.EmailField(_('email address'), unique=True,)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
+    email = models.EmailField(_('email address'), unique=True, null=True)
     phone_number = PhoneNumberField(unique=True)
     wallet = models.DecimalField(max_digits=20, decimal_places=2, default=0.00, null=True)
     otp = models.CharField(default='0000', max_length=4)
@@ -165,3 +165,25 @@ class TransactionHistory(models.Model):
     title = models.CharField(max_length=512, null=True, blank=True, choices=TransactionHistoryChoices.choices)
     remaining_balance = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class KorapayTransactionChoices(models.TextChoices):
+    WITHDRAWAL = 'WITHDRAWAL', 'withdrawal'
+    DEPOSIT = 'DEPOSIT', 'deposit'
+
+
+class TransactionStatus(models.TextChoices):
+    PENDING = 'PENDING', 'Pending'
+    FAILED = 'FAILED', 'Failed'
+    SUCCESS = 'SUCCESS', 'Success'
+
+
+class KorapayTransaction(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='web_transactions')
+    title = models.CharField(max_length=512, null=True, blank=True, choices=KorapayTransactionChoices.choices)
+    amount = models.DecimalField(max_digits=20, decimal_places=2, null=True)
+    reference = models.TextField()
+    status = models.CharField(max_length=512, null=True, blank=True, choices=TransactionStatus.choices, default=TransactionStatus.PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
